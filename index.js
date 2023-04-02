@@ -8,7 +8,6 @@ const boutonReponse = document.getElementById("reponse");
 const boutonSuivant = document.getElementById("suivant");
 const scoreDIV = document.getElementById("score");
 const viesDIV = document.getElementById("vies");
-const rankDIV = document.getElementById("rank");
 const reponseDiv = document.getElementById("titreChanson");
 const trouveesDiv = document.getElementById("chansonstrouvees");
 const stop = document.getElementById("stop");
@@ -27,7 +26,6 @@ let seconds = document.querySelector(".seconds");
 let timerContainer = document.querySelector(".timer");
 let timerTime = 0;
 let isRunning = false;
-let rankChansons;
 let chansonsTrouvees = 0;
 
 let i;
@@ -38,12 +36,8 @@ let inputValue = "";
 let songTitle;
 let songID;
 let song;
-
-let tableauChansons = [];
-let tableauDesScores = [];
 let score = 0;
 let vies = 3;
-let meilleurScore = 0;
 
 function init() {
   boutonValider.style.display = "none";
@@ -72,20 +66,6 @@ function jouer() {
     boutonReponse.style.display = "block";
     volumeDiv.style.display = "block";
   });
-}
-
-function audioPlay(y) {
-  audio = new Audio();
-  audio.src = `assets/${y}.mp3`;
-  audio.currentTime = 0;
-  audio.play();
-  audio.volume = `0.${w}`;
-}
-
-function audioStop(y) {
-  audio.src = `assets/${y}.mp3`;
-  audio.currentTime = 0;
-  audio.pause();
 }
 
 volMoins.addEventListener("click", () => {
@@ -134,6 +114,20 @@ function playSong(w) {
   audioPlay(y, v);
 }
 
+function audioPlay(y) {
+  audio = new Audio();
+  audio.src = `assets/${y}.mp3`;
+  audio.currentTime = 0;
+  audio.play();
+  audio.volume = `0.${w}`;
+}
+
+function audioStop() {
+  console.log("///////////////////////////////////////////////");
+  audio.currentTime = 0;
+  audio.pause();
+}
+
 input.addEventListener("input", (e) => {
   inputValue = e.target.value.toLocaleLowerCase();
 });
@@ -173,25 +167,28 @@ function editDistance(inputValue, songTitle) {
 }
 
 function valider() {
+  let r = 0;
   boutonValider.addEventListener("click", (e) => {
     e.preventDefault();
     let pourcent = similarity(inputValue, songTitle);
     let pourcentRound = pourcent * 100;
     let scorePourcent = Math.round(pourcentRound);
     if (scorePourcent > 75 && inputValue != "") {
-      audioStop();
       scoreChecker();
-      stopTimer();
       chronoChecker();
+      audioStop();
+      stopTimer();
       boutonRejouer.style.display = "none";
       boutonReponse.style.display = "none";
       boutonValider.style.display = "none";
       seconds.style.display = "none";
-      stop.style.display = "block";
       inputValue = "";
       input.value = "";
       chansonsTrouvees = chansonsTrouvees + 1;
       trouveesDiv.innerHTML = `Chansons trouvées : ${chansonsTrouvees}`;
+      setTimeout(() => {
+        stop.style.display = "block";
+      }, 800);
     } else if (scorePourcent < 75 && inputValue != "") {
       vies = vies - 1;
       viesDIV.innerHTML = `<h1>${vies}</h1>`;
@@ -207,21 +204,17 @@ stop.addEventListener("click", () => {
 });
 
 function scoreChecker() {
+  console.log("score checker");
   if (vies <= 0) {
     viesDIV.innerHTML = `<h1>Perdu</h1>`;
     boutonRejouer.style.display = "none";
     input.style.display = "none";
     boutonValider.style.display = "none";
     boutonNouvellePartie.style.display = "block";
-    meilleurScore = score;
-    rankChansons = chansonsTrouvees;
-    tableauDesScores.push(meilleurScore);
-    tableauChansons.push(chansonsTrouvees);
-    displaySongList(tableauDesScores);
-    displayRankSongs(tableauChansons);
     stopTimer();
     seconds.style.display = "none";
     volumeDiv.style.display = "none";
+    stop.style.display = "none";
   }
   if (vies == 3) {
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
@@ -233,6 +226,7 @@ function scoreChecker() {
   if (vies == 1) {
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart-broken"></i><i class="fas fa-heart-broken"></i></h1>`;
   }
+  console.log("fin score checker");
 }
 
 function rejouer() {
@@ -264,16 +258,6 @@ boutonNouvellePartie.addEventListener("click", () => {
   chansonsTrouvees = 0;
   volumeDiv.style.display = "block";
 });
-
-function displaySongList(tableauDesScores) {
-  let listingScore = tableauDesScores.map((score) => `<div>${score}</div>`).join("");
-  rankDIV.innerHTML += listingScore;
-}
-
-function displayRankSongs(tableauChansons) {
-  let listingSongs = tableauChansons.map((score) => `<div>${score}</div>`).join("");
-  rankDIV.innerHTML += listingSongs;
-}
 
 function voirReponse(w) {
   vies = vies - 1;
@@ -323,12 +307,14 @@ function nextSong(w) {
 boutonJouer.addEventListener("click", startTimer);
 
 function chronoChecker() {
-  if (seconds.textContent <= 3) {
+  console.log(`${seconds.textContent} chrono checker`);
+
+  if (seconds.textContent > 0 && seconds.textContent <= 3) {
     score = score + 5;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+5");
     console.log(seconds.textContent + " secs");
-  } else if (seconds.textContent > 4 && seconds.textContent <= 8) {
+  } else if (seconds.textContent > 3 && seconds.textContent <= 8) {
     score = score + 3;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+3");
@@ -349,6 +335,7 @@ function chronoChecker() {
     console.log("+0");
     console.log(seconds.textContent + " secs");
   }
+  console.log("fin chrono checker");
 }
 
 let interval;

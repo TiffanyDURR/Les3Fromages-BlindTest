@@ -10,7 +10,7 @@ const scoreDIV = document.getElementById("score");
 const viesDIV = document.getElementById("vies");
 const reponseDiv = document.getElementById("titreChanson");
 const trouveesDiv = document.getElementById("chansonstrouvees");
-const stop = document.getElementById("stop");
+
 const input = document.querySelector("input");
 const volMoins = document.getElementById("moins");
 const volPlus = document.getElementById("plus");
@@ -47,7 +47,6 @@ function init() {
   boutonNouvellePartie.style.display = "none";
   boutonReponse.style.display = "none";
   boutonSuivant.style.display = "none";
-  stop.style.display = "none";
   volumeDiv.style.display = "none";
   score = 0;
   vies = 3;
@@ -107,7 +106,7 @@ function playSong(w) {
   y = songID;
   boutonReponse.style.display = "block";
   boutonRejouer.style.display = "block";
-  stop.style.display = "none";
+  boutonSuivant.style.display = "none";
   reponseDiv.innerHTML = "";
   seconds.textContent = "0";
   startTimer();
@@ -186,9 +185,7 @@ function valider() {
       input.value = "";
       chansonsTrouvees = chansonsTrouvees + 1;
       trouveesDiv.innerHTML = `Chansons trouvées : ${chansonsTrouvees}`;
-      setTimeout(() => {
-        stop.style.display = "block";
-      }, 800);
+      boutonSuivant.style.display = "block";
     } else if (scorePourcent < 75 && inputValue != "") {
       vies = vies - 1;
       viesDIV.innerHTML = `<h1>${vies}</h1>`;
@@ -197,11 +194,6 @@ function valider() {
   });
 }
 valider();
-
-stop.addEventListener("click", () => {
-  playSong(w);
-  boutonValider.style.display = "block";
-});
 
 function scoreChecker() {
   console.log("score checker");
@@ -214,7 +206,7 @@ function scoreChecker() {
     stopTimer();
     seconds.style.display = "none";
     volumeDiv.style.display = "none";
-    stop.style.display = "none";
+    boutonSuivant.style.display = "none";
   }
   if (vies == 3) {
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;

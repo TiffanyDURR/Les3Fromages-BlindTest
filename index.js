@@ -122,7 +122,6 @@ function audioPlay(y) {
 }
 
 function audioStop() {
-  console.log("///////////////////////////////////////////////");
   audio.currentTime = 0;
   audio.pause();
 }
@@ -196,7 +195,6 @@ function valider() {
 valider();
 
 function scoreChecker() {
-  console.log("score checker");
   if (vies <= 0) {
     viesDIV.innerHTML = `<h1>Perdu</h1>`;
     boutonRejouer.style.display = "none";
@@ -218,7 +216,6 @@ function scoreChecker() {
   if (vies == 1) {
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart-broken"></i><i class="fas fa-heart-broken"></i></h1>`;
   }
-  console.log("fin score checker");
 }
 
 function rejouer() {
@@ -299,35 +296,27 @@ function nextSong(w) {
 boutonJouer.addEventListener("click", startTimer);
 
 function chronoChecker() {
-  console.log(`${seconds.textContent} chrono checker`);
-
   if (seconds.textContent > 0 && seconds.textContent <= 3) {
     score = score + 5;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+5");
-    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 3 && seconds.textContent <= 8) {
     score = score + 3;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+3");
-    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 8 && seconds.textContent <= 14) {
     score = score + 2;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+2");
-    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 14 && seconds.textContent <= 59) {
     score = score + 1;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+1");
-    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 59) {
     score = score + 0;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     console.log("+0");
-    console.log(seconds.textContent + " secs");
   }
-  console.log("fin chrono checker");
 }
 
 let interval;

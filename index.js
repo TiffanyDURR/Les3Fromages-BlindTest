@@ -61,13 +61,14 @@ function init() {
   score = 0;
   vies = 3;
   jouer();
+  volumeText.innerHTML = `50%`;
 }
 
 init();
 
 function jouer() {
   boutonJouer.addEventListener("click", () => {
-    playSong();
+    playSong(w);
     boutonJouer.style.display = "none";
     boutonValider.style.display = "block";
     input.style.display = "block";
@@ -75,6 +76,44 @@ function jouer() {
     volumeDiv.style.display = "block";
   });
 }
+
+function audioPlay(y) {
+  audio = new Audio();
+  audio.src = `assets/${y}.mp3`;
+  console.log(audio);
+  audio.currentTime = 0;
+  audio.play();
+  audio.volume = `0.${w}`;
+  console.log(w + "audioPlay fonction");
+}
+
+function audioStop(y) {
+  audio.src = `assets/${y}.mp3`;
+  audio.currentTime = 0;
+  audio.pause();
+}
+
+volMoins.addEventListener("click", () => {
+  if (w <= 1) {
+    w = 0;
+    volumeText.innerHTML = `<i class="fas fa-volume-mute"></i>`;
+  } else {
+    w = w - 1;
+    volumeText.innerHTML = `${w}0 %`;
+  }
+  audio.volume = `0.${w}`;
+});
+
+volPlus.addEventListener("click", () => {
+  if (w >= 9) {
+    w = 9;
+    volumeText.innerHTML = `100 %`;
+  } else {
+    w = w + 1;
+    volumeText.innerHTML = `${w}0 %`;
+  }
+  audio.volume = `0.${w}`;
+});
 
 function nombreAleatoire(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -88,57 +127,22 @@ function getSong(x) {
   console.log(songID);
 }
 
-function playSong() {
-  i = 1;
+function playSong(w) {
+  i = nombreAleatoire(1, 67);
+  console.log(i);
   x = i - 1;
   getSong(x);
   y = songID;
-  console.log(y + " y");
-  audioPlay(y, v, w);
+  console.log(`${i} chiffre`);
+
   boutonReponse.style.display = "block";
   boutonRejouer.style.display = "block";
   stop.style.display = "none";
   reponseDiv.innerHTML = "";
   seconds.textContent = "0";
   startTimer();
-}
-
-function audioPlay(y, v, w) {
-  audio = new Audio();
-  audio.src = `assets/${y}.mp3`;
-  console.log(audio);
-  audio.play();
-  volumeText.innerHTML = `50%`;
-}
-
-volMoins.addEventListener("click", () => {
-  console.log(w);
-  if (w <= 0) {
-    w = 0;
-    volumeText.innerHTML = `<i class="fas fa-volume-mute"></i>`;
-  } else {
-    w = w - 1;
-    volumeText.innerHTML = `${w}0 %`;
-  }
-  audio.volume = `0.${w}`;
-  console.log(`0.${w}`);
-});
-
-volPlus.addEventListener("click", () => {
-  if (w >= 9) {
-    w = 9;
-    volumeText.innerHTML = `100 %`;
-  } else {
-    w = w + 1;
-    volumeText.innerHTML = `${w}0 %`;
-  }
-  audio.volume = `0.${w}`;
-  console.log(`0.${w}`);
-});
-
-function audioStop(y) {
-  audio.src = `assets/${y}.mp3`;
-  audio.pause();
+  audioPlay(y, v);
+  console.log(w + " fonction PlaySong");
 }
 
 input.addEventListener("input", (e) => {
@@ -187,28 +191,31 @@ function valider() {
     let scorePourcent = Math.round(pourcentRound);
     if (scorePourcent > 75 && inputValue != "") {
       audioStop();
-      console.log(true);
       scoreChecker();
       stopTimer();
       chronoChecker();
+      boutonRejouer.style.display = "none";
+      boutonReponse.style.display = "none";
+      boutonValider.style.display = "none";
+      seconds.style.display = "none";
       stop.style.display = "block";
-      stop.addEventListener("click", () => {
-        playSong();
-      });
       inputValue = "";
       input.value = "";
       chansonsTrouvees = chansonsTrouvees + 1;
-      chansonsTrouvees.innerHTML = `Chansons trouvees : ${chansonsTrouvees}`;
+      trouveesDiv.innerHTML = `Chansons trouvées : ${chansonsTrouvees}`;
     } else if (scorePourcent < 75 && inputValue != "") {
       vies = vies - 1;
       viesDIV.innerHTML = `<h1>${vies}</h1>`;
-      console.log(false);
       scoreChecker();
-      console.log(vies);
     }
   });
 }
 valider();
+
+stop.addEventListener("click", () => {
+  playSong(w);
+  boutonValider.style.display = "block";
+});
 
 function scoreChecker() {
   if (vies <= 0) {
@@ -221,8 +228,6 @@ function scoreChecker() {
     rankChansons = chansonsTrouvees;
     tableauDesScores.push(meilleurScore);
     tableauChansons.push(chansonsTrouvees);
-    console.log(tableauDesScores);
-    console.log(meilleurScore);
     displaySongList(tableauDesScores);
     displayRankSongs(tableauChansons);
     stopTimer();
@@ -243,14 +248,16 @@ function scoreChecker() {
 
 function rejouer() {
   boutonRejouer.addEventListener("click", () => {
+    audioStop();
     vies = vies - 1;
     viesDIV.innerHTML = `<h1>${vies}</h1>`;
     scoreChecker();
-    audioPlay(y, v, w);
+    console.log(w + " valeur w");
+    audio.volume = `0.${w}`;
+    audioPlay(y, v);
+    console.log(w + " function rejouer");
   });
 }
-
-rejouer();
 
 function nouvellePartie() {
   boutonNouvellePartie.addEventListener("click", () => {
@@ -264,7 +271,7 @@ function nouvellePartie() {
     input.value = "";
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
-    playSong();
+    playSong(w);
     stopTimer();
     seconds.style.display = "none";
     chansonsTrouvees = 0;
@@ -284,7 +291,7 @@ function displayRankSongs(tableauChansons) {
   rankDIV.innerHTML += listingSongs;
 }
 
-function voirReponse() {
+function voirReponse(w) {
   vies = vies - 1;
   score = score + 0;
   scoreChecker();
@@ -292,14 +299,10 @@ function voirReponse() {
   seconds.style.display = "none";
 }
 
-function chansonSuivante() {
-  playSong();
-}
-
 boutonReponse.addEventListener("click", () => {
   audioStop();
   reponseDiv.innerHTML = `${song}`;
-  voirReponse();
+  voirReponse(w);
   input.style.display = "none";
   boutonValider.style.display = "none";
 
@@ -321,41 +324,35 @@ boutonReponse.addEventListener("click", () => {
 });
 
 boutonSuivant.addEventListener("click", () => {
-  chansonSuivante();
+  nextSong(w);
+});
+
+function nextSong(w) {
+  playSong(w);
   reponseDiv.innerHTML = "";
   boutonSuivant.style.display = "none";
   input.style.display = "block";
   boutonValider.style.display = "block";
   boutonReponse.style.display = "block";
-});
+}
 
 boutonJouer.addEventListener("click", startTimer);
 
 function chronoChecker() {
   if (seconds.textContent <= 3) {
     score = score + 5;
-    console.log(seconds.textContent + " chrono check");
-    console.log("Inferieur ou egal à 3 ||| 5");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   } else if (seconds.textContent > 4 && seconds.textContent <= 8) {
     score = score + 3;
-    console.log(seconds.textContent + " chrono check");
-    console.log("Entre 4 et 8 ||| 3");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   } else if (seconds.textContent > 8 && seconds.textContent <= 14) {
     score = score + 2;
-    console.log(seconds.textContent + " chrono check");
-    console.log("Entre 8 et 14 ||| 2");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   } else if (seconds.textContent > 14 && seconds.textContent <= 59) {
     score = score + 1;
-    console.log(seconds.textContent + " chrono check");
-    console.log("Entre 14 et 59 ||| 1");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   } else if (seconds.textContent > 59) {
     score = score + 0;
-    console.log(seconds.textContent + " chrono check");
-    console.log("Plus de 60 ||| 0");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   }
 }
@@ -391,3 +388,5 @@ function incrementTimer() {
     seconds.innerText = pad(numOfSeconds);
   }
 }
+
+rejouer(w);

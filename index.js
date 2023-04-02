@@ -10,7 +10,19 @@ const scoreDIV = document.getElementById("score");
 const viesDIV = document.getElementById("vies");
 const rankDIV = document.getElementById("rank");
 const reponseDiv = document.getElementById("titreChanson");
+const trouveesDiv = document.getElementById("chansonstrouvees");
 const input = document.querySelector("input");
+
+// Timer
+let startButton = document.querySelector("[data-action=start]");
+let stopButton = document.querySelector("[data-action=stop]");
+let seconds = document.querySelector(".seconds");
+let secs = parseInt(seconds.textContent);
+let timerContainer = document.querySelector(".timer");
+let timerTime = 0;
+let isRunning = false;
+let rankChansons;
+let chansonsTrouvees = 0;
 
 let min = 1;
 let max = 67;
@@ -23,8 +35,9 @@ let songTitle;
 let songID;
 let song;
 
+let tableauChansons = [];
 let tableauDesScores = [];
-let score;
+let score = 0;
 let vies = 3;
 let meilleurScore = 0;
 
@@ -75,6 +88,8 @@ function playSong() {
   boutonReponse.style.display = "block";
   boutonRejouer.style.display = "block";
   reponseDiv.innerHTML = "";
+  seconds.textContent = "0";
+  startTimer();
 }
 
 function audioPlay(y) {
@@ -129,13 +144,15 @@ function valider() {
     let pourcentRound = pourcent * 100;
     let scorePourcent = Math.round(pourcentRound);
     if (scorePourcent > 75 && inputValue != "") {
-      score = score + 1;
-      scoreDIV.innerHTML = `<h1>${score}</h1>`;
       console.log(true);
       scoreChecker();
+      stopTimer();
+      chronoChecker();
       playSong();
       inputValue = "";
       input.value = "";
+      chansonsTrouvees = chansonsTrouvees + 1;
+      chansonsTrouvees.innerHTML = `Chansons trouvees : ${chansonsTrouvees}`;
     } else if (scorePourcent < 75 && inputValue != "") {
       vies = vies - 1;
       viesDIV.innerHTML = `<h1>${vies}</h1>`;
@@ -155,10 +172,15 @@ function scoreChecker() {
     boutonValider.style.display = "none";
     boutonNouvellePartie.style.display = "block";
     meilleurScore = score;
+    rankChansons = chansonsTrouvees;
     tableauDesScores.push(meilleurScore);
+    tableauChansons.push(chansonsTrouvees);
     console.log(tableauDesScores);
     console.log(meilleurScore);
     displaySongList(tableauDesScores);
+    displayRankSongs(tableauChansons);
+    stopTimer();
+    seconds.style.display = "none";
   }
   if (vies == 3) {
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
@@ -190,8 +212,14 @@ function nouvellePartie() {
     boutonNouvellePartie.style.display = "none";
     vies = 3;
     score = 0;
+    inputValue = "";
+    input.value = "";
+    scoreDIV.innerHTML = `<h1>${score}</h1>`;
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
     playSong();
+    stopTimer();
+    seconds.style.display = "none";
+    chansonsTrouvees = 0;
   });
 }
 
@@ -199,13 +227,20 @@ nouvellePartie();
 
 function displaySongList(tableauDesScores) {
   let listingScore = tableauDesScores.map((score) => `<div>${score}</div>`).join("");
-  rankDIV.innerHTML = listingScore;
+  rankDIV.innerHTML += listingScore;
+}
+
+function displayRankSongs(tableauChansons) {
+  let listingSongs = tableauChansons.map((score) => `<div>${score}</div>`).join("");
+  rankDIV.innerHTML += listingSongs;
 }
 
 function voirReponse() {
   vies = vies - 1;
   score = score + 0;
   scoreChecker();
+  stopTimer();
+  seconds.style.display = "none";
 }
 
 function chansonSuivante() {
@@ -243,3 +278,66 @@ boutonSuivant.addEventListener("click", () => {
   boutonValider.style.display = "block";
   boutonReponse.style.display = "block";
 });
+
+boutonJouer.addEventListener("click", startTimer);
+
+function chronoChecker() {
+  if (seconds.textContent <= 4) {
+    score = score + 5;
+    console.log(seconds.textContent + " chrono check");
+    console.log("Inferieur ou egal à 4 + 5");
+    scoreDIV.innerHTML = `<h1>${score}</h1>`;
+  } else if (seconds.textContent > 4 && seconds.textContent <= 10) {
+    score = score + 3;
+    console.log(seconds.textContent + " chrono check");
+    console.log("Entre 4 et 10 + 3");
+    scoreDIV.innerHTML = `<h1>${score}</h1>`;
+  } else if (seconds.textContent > 10 && seconds.textContent <= 30) {
+    score = score + 2;
+    console.log(seconds.textContent + " chrono check");
+    console.log("Entre 10 et 30 + 2");
+    scoreDIV.innerHTML = `<h1>${score}</h1>`;
+  } else if (seconds.textContent > 30 && seconds.textContent <= 59) {
+    score = score + 1;
+    console.log(seconds.textContent + " chrono check");
+    console.log("Entre 30 et 59 + 1");
+    scoreDIV.innerHTML = `<h1>${score}</h1>`;
+  } else if (seconds.textContent > 59) {
+    score = score + 0;
+    console.log(seconds.textContent + " chrono check");
+    console.log("Plus de 60 + 0");
+    scoreDIV.innerHTML = `<h1>${score}</h1>`;
+  }
+}
+
+let interval;
+
+// Fonctions pour le Timer
+function startTimer() {
+  if (isRunning) return;
+  isRunning = true;
+  interval = setInterval(incrementTimer, 1000);
+  seconds.style.display = "block";
+}
+
+function stopTimer() {
+  if (!isRunning) return;
+  isRunning = false;
+  timerTime = 0;
+  clearInterval(interval);
+}
+
+function pad(number) {
+  return number < 10 ? +number : number;
+}
+
+function incrementTimer() {
+  timerTime++;
+  const numOfSeconds = timerTime;
+  if (seconds.textContent > 59) {
+    seconds.innerText = "Tu as dépassé une minute !";
+    stopTimer();
+  } else {
+    seconds.innerText = pad(numOfSeconds);
+  }
+}

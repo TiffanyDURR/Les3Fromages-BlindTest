@@ -24,15 +24,12 @@ let w = 5;
 let startButton = document.querySelector("[data-action=start]");
 let stopButton = document.querySelector("[data-action=stop]");
 let seconds = document.querySelector(".seconds");
-let secs = parseInt(seconds.textContent);
 let timerContainer = document.querySelector(".timer");
 let timerTime = 0;
 let isRunning = false;
 let rankChansons;
 let chansonsTrouvees = 0;
 
-let min = 1;
-let max = 67;
 let i;
 let x;
 let y;
@@ -80,11 +77,9 @@ function jouer() {
 function audioPlay(y) {
   audio = new Audio();
   audio.src = `assets/${y}.mp3`;
-  console.log(audio);
   audio.currentTime = 0;
   audio.play();
   audio.volume = `0.${w}`;
-  console.log(w + "audioPlay fonction");
 }
 
 function audioStop(y) {
@@ -123,18 +118,13 @@ function getSong(x) {
   song = songs[x].titre;
   songTitle = songs[x].titre.toLocaleLowerCase();
   songID = songs[x].identifiant;
-  console.log(song);
-  console.log(songID);
 }
 
 function playSong(w) {
   i = nombreAleatoire(1, 67);
-  console.log(i);
   x = i - 1;
   getSong(x);
   y = songID;
-  console.log(`${i} chiffre`);
-
   boutonReponse.style.display = "block";
   boutonRejouer.style.display = "block";
   stop.style.display = "none";
@@ -142,7 +132,6 @@ function playSong(w) {
   seconds.textContent = "0";
   startTimer();
   audioPlay(y, v);
-  console.log(w + " fonction PlaySong");
 }
 
 input.addEventListener("input", (e) => {
@@ -252,34 +241,29 @@ function rejouer() {
     vies = vies - 1;
     viesDIV.innerHTML = `<h1>${vies}</h1>`;
     scoreChecker();
-    console.log(w + " valeur w");
     audio.volume = `0.${w}`;
     audioPlay(y, v);
-    console.log(w + " function rejouer");
   });
 }
 
-function nouvellePartie() {
-  boutonNouvellePartie.addEventListener("click", () => {
-    boutonRejouer.style.display = "block";
-    input.style.display = "block";
-    boutonValider.style.display = "block";
-    boutonNouvellePartie.style.display = "none";
-    vies = 3;
-    score = 0;
-    inputValue = "";
-    input.value = "";
-    scoreDIV.innerHTML = `<h1>${score}</h1>`;
-    viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
-    playSong(w);
-    stopTimer();
-    seconds.style.display = "none";
-    chansonsTrouvees = 0;
-    volumeDiv.style.display = "block";
-  });
-}
-
-nouvellePartie();
+boutonNouvellePartie.addEventListener("click", () => {
+  score = 0;
+  vies = 3;
+  stopTimer();
+  audioStop();
+  playSong(w);
+  boutonRejouer.style.display = "block";
+  input.style.display = "block";
+  boutonValider.style.display = "block";
+  boutonNouvellePartie.style.display = "none";
+  inputValue = "";
+  input.value = "";
+  scoreDIV.innerHTML = `<h1>${score}</h1>`;
+  viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
+  seconds.style.display = "block";
+  chansonsTrouvees = 0;
+  volumeDiv.style.display = "block";
+});
 
 function displaySongList(tableauDesScores) {
   let listingScore = tableauDesScores.map((score) => `<div>${score}</div>`).join("");
@@ -342,18 +326,28 @@ function chronoChecker() {
   if (seconds.textContent <= 3) {
     score = score + 5;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
+    console.log("+5");
+    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 4 && seconds.textContent <= 8) {
     score = score + 3;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
+    console.log("+3");
+    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 8 && seconds.textContent <= 14) {
     score = score + 2;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
+    console.log("+2");
+    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 14 && seconds.textContent <= 59) {
     score = score + 1;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
+    console.log("+1");
+    console.log(seconds.textContent + " secs");
   } else if (seconds.textContent > 59) {
     score = score + 0;
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
+    console.log("+0");
+    console.log(seconds.textContent + " secs");
   }
 }
 

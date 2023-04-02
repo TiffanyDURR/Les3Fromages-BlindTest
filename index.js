@@ -282,7 +282,7 @@ boutonSuivant.addEventListener("click", () => {
 boutonJouer.addEventListener("click", startTimer);
 
 function chronoChecker() {
-  if (seconds.textContent <= 4) {
+  if (seconds.textContent <= 3) {
     score = score + 5;
     console.log(seconds.textContent + " chrono check");
     console.log("Inferieur ou egal à 4 + 5");

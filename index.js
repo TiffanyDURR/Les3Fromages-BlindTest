@@ -11,7 +11,14 @@ const viesDIV = document.getElementById("vies");
 const rankDIV = document.getElementById("rank");
 const reponseDiv = document.getElementById("titreChanson");
 const trouveesDiv = document.getElementById("chansonstrouvees");
+const stop = document.getElementById("stop");
 const input = document.querySelector("input");
+const volMoins = document.getElementById("moins");
+const volPlus = document.getElementById("plus");
+const volumeDiv = document.getElementById("volume");
+const volumeText = document.getElementById("volText");
+let v = 0.5;
+let w = 5;
 
 // Timer
 let startButton = document.querySelector("[data-action=start]");
@@ -49,6 +56,8 @@ function init() {
   boutonNouvellePartie.style.display = "none";
   boutonReponse.style.display = "none";
   boutonSuivant.style.display = "none";
+  stop.style.display = "none";
+  volumeDiv.style.display = "none";
   score = 0;
   vies = 3;
   jouer();
@@ -63,6 +72,7 @@ function jouer() {
     boutonValider.style.display = "block";
     input.style.display = "block";
     boutonReponse.style.display = "block";
+    volumeDiv.style.display = "block";
   });
 }
 
@@ -79,24 +89,56 @@ function getSong(x) {
 }
 
 function playSong() {
-  i = nombreAleatoire(min, max);
+  i = 1;
   x = i - 1;
   getSong(x);
   y = songID;
   console.log(y + " y");
-  audioPlay(y);
+  audioPlay(y, v, w);
   boutonReponse.style.display = "block";
   boutonRejouer.style.display = "block";
+  stop.style.display = "none";
   reponseDiv.innerHTML = "";
   seconds.textContent = "0";
   startTimer();
 }
 
-function audioPlay(y) {
+function audioPlay(y, v, w) {
   audio = new Audio();
   audio.src = `assets/${y}.mp3`;
   console.log(audio);
   audio.play();
+  volumeText.innerHTML = `50%`;
+}
+
+volMoins.addEventListener("click", () => {
+  console.log(w);
+  if (w <= 0) {
+    w = 0;
+    volumeText.innerHTML = `<i class="fas fa-volume-mute"></i>`;
+  } else {
+    w = w - 1;
+    volumeText.innerHTML = `${w}0 %`;
+  }
+  audio.volume = `0.${w}`;
+  console.log(`0.${w}`);
+});
+
+volPlus.addEventListener("click", () => {
+  if (w >= 9) {
+    w = 9;
+    volumeText.innerHTML = `100 %`;
+  } else {
+    w = w + 1;
+    volumeText.innerHTML = `${w}0 %`;
+  }
+  audio.volume = `0.${w}`;
+  console.log(`0.${w}`);
+});
+
+function audioStop(y) {
+  audio.src = `assets/${y}.mp3`;
+  audio.pause();
 }
 
 input.addEventListener("input", (e) => {
@@ -144,11 +186,15 @@ function valider() {
     let pourcentRound = pourcent * 100;
     let scorePourcent = Math.round(pourcentRound);
     if (scorePourcent > 75 && inputValue != "") {
+      audioStop();
       console.log(true);
       scoreChecker();
       stopTimer();
       chronoChecker();
-      playSong();
+      stop.style.display = "block";
+      stop.addEventListener("click", () => {
+        playSong();
+      });
       inputValue = "";
       input.value = "";
       chansonsTrouvees = chansonsTrouvees + 1;
@@ -181,6 +227,7 @@ function scoreChecker() {
     displayRankSongs(tableauChansons);
     stopTimer();
     seconds.style.display = "none";
+    volumeDiv.style.display = "none";
   }
   if (vies == 3) {
     viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
@@ -199,6 +246,7 @@ function rejouer() {
     vies = vies - 1;
     viesDIV.innerHTML = `<h1>${vies}</h1>`;
     scoreChecker();
+    audioPlay(y, v, w);
   });
 }
 
@@ -220,6 +268,7 @@ function nouvellePartie() {
     stopTimer();
     seconds.style.display = "none";
     chansonsTrouvees = 0;
+    volumeDiv.style.display = "block";
   });
 }
 
@@ -248,6 +297,7 @@ function chansonSuivante() {
 }
 
 boutonReponse.addEventListener("click", () => {
+  audioStop();
   reponseDiv.innerHTML = `${song}`;
   voirReponse();
   input.style.display = "none";
@@ -285,27 +335,27 @@ function chronoChecker() {
   if (seconds.textContent <= 3) {
     score = score + 5;
     console.log(seconds.textContent + " chrono check");
-    console.log("Inferieur ou egal à 4 + 5");
+    console.log("Inferieur ou egal à 3 ||| 5");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
-  } else if (seconds.textContent > 4 && seconds.textContent <= 10) {
+  } else if (seconds.textContent > 4 && seconds.textContent <= 8) {
     score = score + 3;
     console.log(seconds.textContent + " chrono check");
-    console.log("Entre 4 et 10 + 3");
+    console.log("Entre 4 et 8 ||| 3");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
-  } else if (seconds.textContent > 10 && seconds.textContent <= 30) {
+  } else if (seconds.textContent > 8 && seconds.textContent <= 14) {
     score = score + 2;
     console.log(seconds.textContent + " chrono check");
-    console.log("Entre 10 et 30 + 2");
+    console.log("Entre 8 et 14 ||| 2");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
-  } else if (seconds.textContent > 30 && seconds.textContent <= 59) {
+  } else if (seconds.textContent > 14 && seconds.textContent <= 59) {
     score = score + 1;
     console.log(seconds.textContent + " chrono check");
-    console.log("Entre 30 et 59 + 1");
+    console.log("Entre 14 et 59 ||| 1");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   } else if (seconds.textContent > 59) {
     score = score + 0;
     console.log(seconds.textContent + " chrono check");
-    console.log("Plus de 60 + 0");
+    console.log("Plus de 60 ||| 0");
     scoreDIV.innerHTML = `<h1>${score}</h1>`;
   }
 }

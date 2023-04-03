@@ -9,31 +9,45 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="volumeTitre"></div>
     <div id="volume">
       <button id="moins"><i class="fas fa-volume-down"></i></button>
       <div id="volText"></div>
       <button id="plus"><i class="fas fa-volume-up"></i></button>
     </div>
 
-    <button id="jouer">Jouer</button>
-    <button id="replay">Réécouter</button>
-    <button id="newGame">Nouvelle partie</button>
-    <button id="reponse">Voir la réponse</button>
+    <main>
+      <header>
+        <h1>Blind<span>Test</span></h1>
+      </header>
+      <div id="score"><h1>0</h1></div>
+      <div id="chansonstrouvees"></div>
+      <div class="lecturebox">
+        <span class="lecture"></span>
+      </div>
 
-    <div id="chansonstrouvees"></div>
-    <div class="timer">
-      <div class="minutes"></div>
-      <div class="seconds"></div>
-    </div>
-    <div id="score"><h1>0</h1></div>
-    <div id="vies"><h1>0</h1></div>
-    <div id="titreChanson"></div>
-    <form action="">
-      <input type="text" autocomplete="off" />
-      <button id="valider">Valider</button>
-    </form>
-    <button id="suivant">Chanson suivante</button>
+      <div class="timer">
+        <span>Chrono :</span>
+        <div class="seconds"></div>
+      </div>
+      <div id="vies"><h1>0</h1></div>
+      <div id="titreChanson"></div>
+      <div class="bonus-container">
+        <div id="bonus">Bonus</div>
+      </div>
+      <form action="">
+        <input type="text" autocomplete="off" placeholder="Titre de la chanson..." />
+        <button id="valider"><i class="fas fa-check"></i></button>
+      </form>
+      <div class="buttons">
+        <button id="replay">Réécouter<span>-1 point</span></button> <button id="reponse">Voir la réponse<span>-1 vie</span></button>
+      </div>
+      <button id="suivant"><i class="fas fa-play-circle"></i> <span>Chanson suivante</span></button>
 
+      <button id="jouer">Jouer</button>
+
+      <button id="newGame">Nouvelle partie</button>
+    </main>
     <script type="module" src="index.js"></script>
   </body>
 </html>

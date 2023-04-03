@@ -128,7 +128,7 @@ function getSong(x) {
 }
 
 function playSong(w) {
-  i = 56;
+  i = nombreAleatoire(1, 67);
   x = i - 1;
   getSong(x);
   y = songID;

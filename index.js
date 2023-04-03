@@ -227,7 +227,9 @@ function valider() {
       bonus.innerHTML = `<i class="fas fa-skull"></i>`;
       bonus.style.display = "block";
       bonus.classList.add("animation");
-
+      setTimeout(() => {
+        bonus.style.display = "none";
+      }, 1800);
       if (vies > 1 && vies < 4) {
         lectureDIV.innerHTML = `Ce n'est pas le bon titre !`;
       }
@@ -235,12 +237,10 @@ function valider() {
         lectureDIV.innerHTML = `Tu n'as plus qu'une vie !`;
       }
       if (vies < 1) {
-        lectureDIV.innerHTML = `On retente sa chance ?`;
-      }
-
-      setTimeout(() => {
+        lectureDIV.innerHTML = `Tu retentes ta chance ?!`;
+        reponseDiv.innerHTML = `Réponse : <span class="color">${song}</span>`;
         bonus.style.display = "none";
-      }, 1800);
+      }
     }
   });
 }
@@ -284,6 +284,12 @@ function rejouer() {
     scoreChecker();
     audio.volume = `0.${w}`;
     audioPlay(y, v);
+    bonus.innerHTML = `-1 point !`;
+    bonus.style.display = "block";
+    bonus.classList.add("animation");
+    setTimeout(() => {
+      bonus.style.display = "none";
+    }, 1800);
   });
 }
 

@@ -228,6 +228,16 @@ function valider() {
       bonus.style.display = "block";
       bonus.classList.add("animation");
 
+      if (vies > 1 && vies < 4) {
+        lectureDIV.innerHTML = `Ce n'est pas le bon titre !`;
+      }
+      if (vies == 1) {
+        lectureDIV.innerHTML = `Tu n'as plus qu'une vie !`;
+      }
+      if (vies < 1) {
+        lectureDIV.innerHTML = `On retente sa chance ?`;
+      }
+
       setTimeout(() => {
         bonus.style.display = "none";
       }, 1800);

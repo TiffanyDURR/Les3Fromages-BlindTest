@@ -479,19 +479,21 @@ span#playerNameContainer {
   }
 }
 
+#animatedItemContainer {
+  margin-top: -170px;
+}
+
+.particleDiv {
+}
+
 canvas {
-  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  left: 50%; /* à 50%/50% du parent référent */
-  transform: translate(-50%, -50%);
-  top: 50%;
-  margin-top: -160px;
-  width: 500px;
-  height: 500px;
-  padding: 20px;
   z-index: 1;
+  border-radius: 50%;
 }
 
 .content #launcher {

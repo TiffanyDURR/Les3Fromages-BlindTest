@@ -473,10 +473,9 @@ const bubbles = 8;
 const explode = () => {
   let particles = [];
   let ratio = 1;
-  let c = document.createElement("canvas");
+  let animParticles = document.querySelector(".animParticles");
+  let c = document.querySelector("canvas");
   let ctx = c.getContext("2d");
-
-  c.style.position = "absolute";
 
   c.style.pointerEvents = "none";
   c.style.width = 200 + "px";
@@ -484,7 +483,7 @@ const explode = () => {
   c.style.zIndex = 1;
   c.width = 200;
   c.height = 200;
-  document.body.appendChild(c);
+  animParticles.appendChild(c);
 
   for (var m = 0; m < bubbles; m++) {
     particles.push({
@@ -502,7 +501,8 @@ const explode = () => {
   }
 
   render(particles, ctx, c.width, c.height);
-  setTimeout(() => document.body.removeChild(c), 1000);
+  setTimeout(() => animParticles.removeChild(c), 200);
+  setTimeout(() => animParticles.appendChild(c), 200);
 };
 
 const render = (particles, ctx, width, height) => {

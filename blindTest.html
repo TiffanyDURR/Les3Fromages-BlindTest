@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="https://www.3fansite.fr/assets/favicon.png" />
+    <script src="https://kit.fontawesome.com/159d0e16c5.js" crossorigin="anonymous"></script>
+    <title>BlindTest - 3F - Beta Version</title>
+    <link rel="stylesheet" href="blindTest.css" />
+  </head>
+  <body>
+    <header></header>
+
+    <main>
+      <div class="content">
+        <div id="launcher">
+          <h1>Blind<span>Test</span></h1>
+          <h2>Les 3 Fromages</h2>
+
+          <div id="inputPlayerName">
+            <form action="">
+              <button class="animatedItemContainer" id="startGame">
+                <div class="animatedItem">Commencer une partie</div>
+              </button>
+              <input type="text" id="playerName" placeholder="Ton pseudo..." />
+            </form>
+            <div id="PlayerNameError"></div>
+          </div>
+        </div>
+        <div>
+          <div id="game">
+            <div id="gameHeader">
+              <div id="playerNameInfos">
+                <div class="playerNameContainer"><span id="playerNameContainer"></span></div>
+              </div>
+              <div id="volumeSettings">
+                <button id="turnDownVolume"><i class="fas fa-volume-down"></i></button>
+                <button id="turnUpVolume"><i class="fas fa-volume-up"></i></button>
+              </div>
+            </div>
+            <h1 id="score"><span>Score</span> 0</h1>
+            <h2 id="guessedSongs">Chanson trouvée : 0</h2>
+
+            <div class="particleDiv">
+              <div class="animParticles"><canvas></canvas></div>
+            </div>
+            <div id="animatedItemContainer">
+              <div id="animatedItem"></div>
+            </div>
+            <div id="timer">
+              <span>Chrono</span>
+              <span id="seconds">0</span>
+            </div>
+            <div id="lives">0</div>
+            <div id="songTitle"></div>
+            <div id="bonusContainer">
+              <div id="bonus"></div>
+            </div>
+
+            <form class="game">
+              <input id="mainInput" type="text" autocomplete="off" placeholder="Titre de la chanson..." />
+              <button id="mainSubmit" type="submit"><i class="fas fa-check"></i></button>
+            </form>
+
+            <div id="gameOptions">
+              <button id="listenAgain">Réécouter<span>-1 point</span></button>
+              <button id="showSolution">Voir la réponse<span>-1 vie</span></button>
+            </div>
+
+            <button id="nextSong"><i class="fas fa-play-circle"></i> <span>Chanson suivante</span></button>
+            <button id="newGame">Nouvelle partie</button>
+          </div>
+        </div>
+
+        <div id="ScoreLeaderboard">
+          <h1>Tableau des scores</h1>
+          <div class="rankedTable">
+            <div>Nom</div>
+            <div>Score</div>
+            <div>Chansons trouvées</div>
+          </div>
+
+          <div class="rankedTableList">
+            <div id="rankedPlayerName"></div>
+            <div id="rankedScore"></div>
+            <div id="rankedGuessedSongs"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer></footer>
+    <script type="module" src="blindTest.js"></script>
+  </body>
+</html>

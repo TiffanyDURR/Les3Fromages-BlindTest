@@ -1,4 +1,4 @@
-import { songs } from "./data.js";
+import { songs } from "./blindTestData.js";
 
 const boutonValider = document.getElementById("valider");
 const boutonJouer = document.getElementById("jouer");

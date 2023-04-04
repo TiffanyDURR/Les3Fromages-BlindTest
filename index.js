@@ -230,46 +230,6 @@ function editDistance(inputValue, songTitle) {
   return costs[songTitle.length];
 }
 
-function submitMobile() {
-  submitButton.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    let pourcent = similarity(inputValue, songTitle);
-    let pourcentRound = pourcent * 100;
-    let scorePourcent = Math.round(pourcentRound);
-    if (scorePourcent > 75 && inputValue != "") {
-      hide();
-      nextSongButton.style.display = "flex";
-      scoreChecker();
-      chronoChecker();
-      audioStop();
-      stopTimer();
-      inputValue = "";
-      input.value = "";
-      guessedSongs = guessedSongs + 1;
-      if (guessedSongs == 1) {
-        guessedSongsContainer.innerHTML = `Chanson trouvée : ${guessedSongs}`;
-      } else {
-        guessedSongsContainer.innerHTML = `Chansons trouvées : ${guessedSongs}`;
-      }
-
-      animatedItemContainer.innerHTML = `${song}`;
-    } else if (scorePourcent < 75 && inputValue != "") {
-      lives = lives - 1;
-      livesContainer.innerHTML = `${lives}`;
-      scoreChecker();
-      bonusInfos = `<i class="fas fa-skull"></i>`;
-      bonusAnimated(bonusInfos);
-      if (lives == 2) {
-        animatedItemContainer.innerHTML = `Mauvaise réponse !`;
-      }
-      if (lives == 1) {
-        animatedItemContainer.innerHTML = `Faux ! <br>Plus qu'une vie !`;
-      }
-    }
-  });
-}
-submitMobile();
-
 function submit() {
   submitButton.addEventListener("click", (e) => {
     e.preventDefault();

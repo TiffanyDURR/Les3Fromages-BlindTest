@@ -1,148 +1,182 @@
 import { songs } from "./data.js";
 
-const boutonValider = document.getElementById("valider");
-const boutonJouer = document.getElementById("jouer");
-const boutonRejouer = document.getElementById("replay");
-const boutonNouvellePartie = document.getElementById("newGame");
-const boutonReponse = document.getElementById("reponse");
-const boutonSuivant = document.getElementById("suivant");
-const scoreDIV = document.getElementById("score");
-const viesDIV = document.getElementById("vies");
-const reponseDiv = document.getElementById("titreChanson");
-const trouveesDiv = document.getElementById("chansonstrouvees");
-const iVolumeDown = document.querySelector(".fa-volume-down");
-const iVolumeUp = document.querySelector(".fa-volume-up");
+// DOM - Containers
+const scoreContainer = document.getElementById("score");
+const livesContainer = document.getElementById("lives");
+const songTitleContainer = document.getElementById("songTitle");
+const bonusContainer = document.getElementById("bonus");
+const guessedSongsContainer = document.getElementById("guessedSongs");
+const animatedItemContainer = document.getElementById("animatedItem");
 const form = document.querySelector("form");
-const bonus = document.getElementById("bonus");
+const input = document.getElementById("mainInput");
+const inputPlayerName = document.getElementById("playerName");
+const gameContainer = document.getElementById("game");
+const launcherContainer = document.getElementById("launcher");
+const playerNameContainer = document.getElementById("playerNameContainer");
+const PlayerNameErrorContainer = document.getElementById("PlayerNameError");
+const ScoreLeaderboardContainer = document.getElementById("ScoreLeaderboard");
 
-const input = document.querySelector("input");
-const volMoins = document.getElementById("moins");
-const volPlus = document.getElementById("plus");
-const volumeDiv = document.getElementById("volume");
-const volumeTitre = document.querySelector(".volumeTitre");
-const volumeText = document.getElementById("volText");
-const lectureDIV = document.querySelector(".lecture");
-let v = 0.5;
-let w = 5;
+// Ranked
+
+const rankedPlayerNameContainer = document.getElementById("rankedPlayerName");
+const rankedScoreContainer = document.getElementById("rankedScore");
+const rankedGuessedSongsContainer = document.getElementById("rankedGuessedSongs");
+let rankedPlayerNameTable = [];
+let rankedScoreTable = [];
+let rankedGuessedSongsTable = [];
+
+// DOM - Buttons
+const submitButton = document.getElementById("mainSubmit");
+const startGameButton = document.getElementById("startGame");
+const listenAgainButton = document.getElementById("listenAgain");
+const newGameButton = document.getElementById("newGame");
+const nextSongButton = document.getElementById("nextSong");
+//// Display "songTitleContainer"
+const showSolutionButton = document.getElementById("showSolution");
+
+// DOM - Settings
+//// Audio
+const turnDownVolumeButton = document.getElementById("turnDownVolume");
+const turnUpVolumeButton = document.getElementById("turnUpVolume");
+
+//// Variables
+let audio;
+let v = 0.3;
+let w = 3;
 
 // Timer
 let startButton = document.querySelector("[data-action=start]");
 let stopButton = document.querySelector("[data-action=stop]");
-let seconds = document.querySelector(".seconds");
-let timerContainer = document.querySelector(".timer");
+let seconds = document.getElementById("seconds");
+let timerContainer = document.getElementById("timer");
 let timerTime = 0;
 let isRunning = false;
-let chansonsTrouvees = 0;
+let interval;
 
+// Variables
+//// Random Number
 let i;
+//// Song Index
 let x;
+//// Song ID
 let y;
-let audio;
 let inputValue = "";
+let bonusInfos = "";
+let playerNameValue = "";
+
+// Data
 let songTitle;
 let songID;
 let song;
+
+// Infos Game
+let guessedSongs = 0;
 let score = 0;
-let vies = 3;
+let lives = 3;
 
 function init() {
-  boutonValider.style.display = "none";
-  boutonRejouer.style.display = "none";
-  input.style.display = "none";
-  form.style.display = "none";
-  timerContainer.style.display = "none";
-  viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
-  viesDIV.style.display = "none";
-  boutonNouvellePartie.style.display = "none";
-  boutonReponse.style.display = "none";
-  boutonSuivant.style.display = "none";
-  volumeDiv.style.display = "none";
-  volumeTitre.style.display = "none";
-  scoreDIV.style.display = "none";
-  lectureDIV.style.display = "none";
+  livesContainer.innerHTML = `<i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i>`;
+  gameContainer.style.display = "none";
+  ScoreLeaderboardContainer.style.display = "none";
+  nextSongButton.style.display = "none";
   score = 0;
-  vies = 3;
-  jouer();
-  volumeText.innerHTML = `50%`;
+  lives = 3;
+  startGame();
+  newGameButton.style.display = `none`;
 }
 
 init();
 
-function jouer() {
-  boutonJouer.addEventListener("click", () => {
-    playSong(w);
-    boutonJouer.style.display = "none";
-    boutonValider.style.display = "block";
-    input.style.display = "block";
-    form.style.display = "flex";
-    boutonReponse.style.display = "block";
-    volumeTitre.style.display = "flex";
-    volumeDiv.style.display = "flex";
-    scoreDIV.style.display = "flex";
-    viesDIV.style.display = "flex";
+inputPlayerName.addEventListener("input", (e) => {
+  playerNameValue = e.target.value;
+  PlayerNameErrorContainer.innerHTML = ``;
+
+  if (playerNameValue.length < 1) {
+    inputPlayerName.style = `border: 1px solid #e34069`;
+    PlayerNameErrorContainer.innerHTML = `Tu dois indiquer un pseudo`;
+  }
+  if (playerNameValue.length >= 1 && playerNameValue.length <= 16) {
+    inputPlayerName.style = `border: none`;
+    PlayerNameErrorContainer.innerHTML = ``;
+  }
+  if (playerNameValue.length > 16) {
+    inputPlayerName.style = `border: 1px solid #e34069`;
+    PlayerNameErrorContainer.innerHTML = `Ton pseudo doit contenir 16 caractères maximum !`;
+  }
+});
+
+function startGame() {
+  startGameButton.addEventListener("click", () => {
+    if (playerNameValue.length < 1) {
+      PlayerNameErrorContainer.innerHTML = `Tu dois indiquer un pseudo`;
+      inputPlayerName.style = `border: 1px solid #e34069`;
+      setTimeout(() => {
+        PlayerNameErrorContainer.innerHTML = ``;
+        inputPlayerName.style = `border: none`;
+      }, 4000);
+    }
+    if (playerNameValue.length >= 1 && playerNameValue.length <= 16) {
+      playerNameContainer.innerHTML = playerNameValue;
+      playSong(w);
+      gameContainer.style.display = "flex";
+      launcherContainer.style.display = "none";
+    }
+    if (playerNameValue.length > 16) {
+      PlayerNameErrorContainer.innerHTML = `Ton pseudo doit contenir 16 caractères maximum !`;
+      inputPlayerName.style = `border: 1px solid #e34069`;
+      setTimeout(() => {
+        PlayerNameErrorContainer.innerHTML = ``;
+        inputPlayerName.style = `border: none`;
+      }, 4000);
+    }
   });
 }
 
-volMoins.addEventListener("click", () => {
-  iVolumeUp.style.color = "#e34069";
-  iVolumeUp.style.border = "1px solid #e34069";
+turnDownVolumeButton.addEventListener("click", () => {
+  turnUpVolumeButton.innerHTML = `<i style="color: #b6b6b6" class="fas fa-volume-up"></i>`;
   if (w <= 1) {
     w = 0;
-    iVolumeDown.style.color = "#383838";
-    iVolumeDown.style.border = "1px solid #383838";
-    volumeText.innerHTML = `<i class="fas fa-volume-mute"></i>`;
+    turnDownVolumeButton.innerHTML = `<i style="color: #2e2e2e" class="fas fa-volume-mute"></i>`;
   } else {
     w = w - 1;
-    iVolumeDown.style.color = "#e34069";
-    iVolumeDown.style.border = "1px solid #e34069";
-    volumeText.innerHTML = `${w}0 %`;
+    turnDownVolumeButton.innerHTML = `  <i style="color: #b6b6b6" class="fas fa-volume-down"></i>`;
   }
   audio.volume = `0.${w}`;
 });
 
-volPlus.addEventListener("click", () => {
-  iVolumeDown.style.color = "#e34069";
-  iVolumeDown.style.border = "1px solid #e34069";
+turnUpVolumeButton.addEventListener("click", () => {
+  turnDownVolumeButton.innerHTML = `<i style="color: #b6b6b6" class="fas fa-volume-down"></i>`;
   if (w >= 9) {
     w = 9;
-    volumeText.innerHTML = `100 %`;
-    iVolumeUp.style.color = "#383838";
-    iVolumeUp.style.border = "1px solid #383838";
+    turnUpVolumeButton.innerHTML = `<i style="color: #2e2e2e" class="fas fa-volume-up"></i>`;
   } else {
     w = w + 1;
-    volumeText.innerHTML = `${w}0 %`;
-    iVolumeUp.style.color = "#e34069";
-    iVolumeUp.style.border = "1px solid #e34069";
+    turnUpVolumeButton.innerHTML = `<i style="color: #b6b6b6" class="fas fa-volume-up"></i>`;
   }
   audio.volume = `0.${w}`;
 });
 
-function nombreAleatoire(min, max) {
+function generateRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function getSong(x) {
-  song = songs[x].titre;
-  songTitle = songs[x].titre.toLocaleLowerCase();
-  songID = songs[x].identifiant;
+  song = songs[x].songName;
+  songTitle = songs[x].songName.toLocaleLowerCase();
+  songID = songs[x].songIndex;
 }
 
-function playSong(w) {
-  i = nombreAleatoire(1, 67);
+function playSong() {
+  i = generateRandomNumber(1, 67);
   x = i - 1;
   getSong(x);
   y = songID;
-  boutonReponse.style.display = "block";
-  boutonRejouer.style.display = "block";
-  boutonSuivant.style.display = "none";
-  scoreDIV.style.display = "flex";
-  reponseDiv.innerHTML = "";
-  viesDIV.style.display = "flex";
+  songTitleContainer.innerHTML = "";
   seconds.textContent = "0";
   startTimer();
   audioPlay(y, v);
-  lectureDIV.style.display = "flex";
-  lectureDIV.innerHTML = `Devine le titre !<br />`;
+  animatedItemContainer.innerHTML = `Devine le titre !`;
+  newGameButton.style.display = `none`;
 }
 
 function audioPlay(y) {
@@ -153,7 +187,7 @@ function audioPlay(y) {
   audio.volume = `0.${w}`;
 }
 
-function audioStop() {
+function audioStop(y) {
   audio.currentTime = 0;
   audio.pause();
 }
@@ -196,242 +230,209 @@ function editDistance(inputValue, songTitle) {
   return costs[songTitle.length];
 }
 
-function valider() {
-  let r = 0;
-  boutonValider.addEventListener("click", (e) => {
+function submit() {
+  submitButton.addEventListener("click", (e) => {
     e.preventDefault();
     let pourcent = similarity(inputValue, songTitle);
     let pourcentRound = pourcent * 100;
     let scorePourcent = Math.round(pourcentRound);
     if (scorePourcent > 75 && inputValue != "") {
+      hide();
+      nextSongButton.style.display = "flex";
       scoreChecker();
       chronoChecker();
       audioStop();
       stopTimer();
-      boutonRejouer.style.display = "none";
-      boutonReponse.style.display = "none";
-      boutonValider.style.display = "none";
-      seconds.style.display = "none";
-      timerContainer.style.display = "none";
       inputValue = "";
       input.value = "";
-      chansonsTrouvees = chansonsTrouvees + 1;
-      trouveesDiv.innerHTML = `Chansons trouvées : ${chansonsTrouvees}`;
-      boutonSuivant.style.display = "block";
-      lectureDIV.innerHTML = `${song}`;
-      input.style.display = "none";
+      guessedSongs = guessedSongs + 1;
+      if (guessedSongs == 1) {
+        guessedSongsContainer.innerHTML = `Chanson trouvée : ${guessedSongs}`;
+      } else {
+        guessedSongsContainer.innerHTML = `Chansons trouvées : ${guessedSongs}`;
+      }
+
+      animatedItemContainer.innerHTML = `${song}`;
     } else if (scorePourcent < 75 && inputValue != "") {
-      vies = vies - 1;
-      viesDIV.innerHTML = `<h1>${vies}</h1>`;
+      lives = lives - 1;
+      livesContainer.innerHTML = `${lives}`;
       scoreChecker();
-      bonus.innerHTML = `<i class="fas fa-skull"></i>`;
-      bonus.style.display = "block";
-      bonus.classList.add("animation");
-      setTimeout(() => {
-        bonus.style.display = "none";
-      }, 1800);
-      if (vies > 1 && vies < 4) {
-        lectureDIV.innerHTML = `Ce n'est pas le bon titre !`;
+      bonusInfos = `<i class="fas fa-skull"></i>`;
+      bonusAnimated(bonusInfos);
+      if (lives == 2) {
+        animatedItemContainer.innerHTML = `Mauvaise réponse !`;
       }
-      if (vies == 1) {
-        lectureDIV.innerHTML = `Tu n'as plus qu'une vie !`;
-      }
-      if (vies < 1) {
-        lectureDIV.innerHTML = `Tu retentes ta chance ?!`;
-        reponseDiv.innerHTML = `Réponse : <span class="color">${song}</span>`;
-        bonus.style.display = "none";
+      if (lives == 1) {
+        animatedItemContainer.innerHTML = `Faux ! <br>Plus qu'une vie !`;
       }
     }
   });
 }
-valider();
+submit();
 
 function scoreChecker() {
-  if (vies <= 0) {
-    viesDIV.innerHTML = `<h1 class="loose">Perdu</h1>`;
-    boutonRejouer.style.display = "none";
-    input.style.display = "none";
-    form.style.display = "none";
-    boutonValider.style.display = "none";
-    boutonNouvellePartie.style.display = "block";
+  if (lives <= 0) {
+    livesContainer.innerHTML = `<span class="looser">Perdu</span`;
+    animatedItemContainer.innerHTML = `<i class="fas fa-skull"></i>`;
     stopTimer();
-    seconds.style.display = "none";
-    timerContainer.style.display = "none";
-    volumeDiv.style.display = "none";
-    volumeTitre.style.display = "none";
-    boutonSuivant.style.display = "none";
-    boutonReponse.style.display = "none";
-    reponseDiv.style.display = "flex";
+    hide();
   }
-  if (vies == 3) {
-    viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
+  if (lives == 2) {
+    livesContainer.innerHTML = `<i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart-broken"></i>`;
+    animatedItemContainer.innerHTML = `Dommage !`;
   }
-
-  if (vies == 2) {
-    viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart-broken"></i></h1>`;
+  if (lives == 1) {
+    livesContainer.innerHTML = `<i class="fas fa-heart"></i><i class="fas fa-heart-broken"></i><i class="fas fa-heart-broken"></i>`;
+    animatedItemContainer.innerHTML = `Plus qu'une vie !`;
   }
-  if (vies == 1) {
-    viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart-broken"></i><i class="fas fa-heart-broken"></i></h1>`;
+  if (lives < 1) {
+    newGameButton.style.display = "flex";
+    songTitleContainer.innerHTML = `Réponse :<span> ${song}</span>`;
   }
 }
 
-function rejouer() {
-  boutonRejouer.addEventListener("click", () => {
+function saveRanked() {
+  rankedPlayerNameTable.push(playerNameInput);
+  rankedGuessedSongsTable.push(guessedSongs);
+  rankedScoreTable.push(score);
+  displayScoreLeaderboardData();
+}
+
+function displayScoreLeaderboardData() {
+  function displayRankedName(rankedPlayerNameTable) {
+    const rankedItems = rankedPlayerNameTable.map((rankedData) => `<li>${rankedData}</li>`).join("");
+    rankedPlayerNameContainer.innerHTML = rankedItems;
+  }
+  displayRankedName(rankedPlayerNameTable);
+
+  function displayRankedGuessedSongs(rankedGuessedSongsTable) {
+    const rankedItems = rankedGuessedSongsTable.map((rankedData) => `<li>${rankedData}</li>`).join("");
+    rankedGuessedSongsContainer.innerHTML = rankedItems;
+  }
+  displayRankedGuessedSongs(rankedGuessedSongsTable);
+
+  function displayrankedScoreTable(rankedScoreTable) {
+    const rankedItems = rankedScoreTable.map((rankedData) => `<li>${rankedData}</li>`).join("");
+    rankedScoreContainer.innerHTML = rankedItems;
+  }
+  displayrankedScoreTable(rankedScoreTable);
+}
+
+function listenAgain() {
+  listenAgainButton.addEventListener("click", () => {
     audioStop();
     score = score - 1;
-    scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-    viesDIV.innerHTML = `<h1>${vies}</h1>`;
+    scoreContainer.innerHTML = `<span>Score</span>${score}`;
     scoreChecker();
     audio.volume = `0.${w}`;
     audioPlay(y, v);
-    bonus.innerHTML = `-1 point !`;
-    bonus.style.display = "block";
-    bonus.classList.add("animation");
-    setTimeout(() => {
-      bonus.style.display = "none";
-    }, 1800);
+    bonusInfos = `-1 point !`;
+    bonusAnimated(bonusInfos);
   });
 }
 
-boutonNouvellePartie.addEventListener("click", () => {
+newGameButton.addEventListener("click", () => {
   score = 0;
-  vies = 3;
+  lives = 3;
   stopTimer();
   audioStop();
   playSong(w);
-  boutonRejouer.style.display = "block";
-  input.style.display = "block";
-  form.style.display = "flex";
-  boutonValider.style.display = "block";
-  boutonNouvellePartie.style.display = "none";
   inputValue = "";
   input.value = "";
-  scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-  viesDIV.innerHTML = `<h1><i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i></h1>`;
-  seconds.style.display = "block";
-  timerContainer.style.display = "flex";
-  chansonsTrouvees = 0;
-  volumeDiv.style.display = "flex";
-  volumeTitre.style.display = "flex";
-  scoreDIV.style.display = "flex";
-  viesDIV.style.display = "flex";
+  scoreContainer.innerHTML = `<span>Score</span>${score}`;
+  livesContainer.innerHTML = `<i class="fas fa-heart"></i><i class="fas fa-heart"></i><i class="fas fa-heart"></i>`;
+  guessedSongs = 0;
+  unhide();
 });
 
-function voirReponse(w) {
-  vies = vies - 1;
+function displaySolution() {
+  lives = lives - 1;
   score = score + 0;
   scoreChecker();
   stopTimer();
-  seconds.style.display = "none";
-  timerContainer.style.display = "none";
 }
 
-boutonReponse.addEventListener("click", () => {
+showSolutionButton.addEventListener("click", () => {
   audioStop();
-  reponseDiv.innerHTML = `Réponse : <span class="color">${song}</span>`;
-  voirReponse(w);
+  songTitleContainer.innerHTML = `<span>Réponse : </span>  ${song}</span>`;
+  displaySolution(w);
+  scoreChecker();
+  inputValue = "";
+  input.value = "";
+  nextSongButton.style.display = "flex";
+  if (lives <= 0) {
+    nextSongButton.style.display = "none";
+  }
+  hide();
+});
+
+function hide() {
   input.style.display = "none";
-  form.style.display = "none";
-  boutonValider.style.display = "none";
-  lectureDIV.style.display = "flex";
-  lectureDIV.innerHTML = `<i class="fas fa-skull"></i>`;
+  listenAgainButton.style.display = "none";
+  showSolutionButton.style.display = "none";
+}
 
-  boutonReponse.style.display = "none";
-  if (vies <= 0) {
-    boutonSuivant.style.display = "none";
-  }
-  if (vies == 3) {
-    boutonSuivant.style.display = "block";
-  }
-
-  if (vies == 2) {
-    boutonSuivant.style.display = "block";
-  }
-  if (vies == 1) {
-    boutonSuivant.style.display = "block";
-  }
-  boutonRejouer.style.display = "none";
-});
-
-boutonSuivant.addEventListener("click", () => {
-  nextSong(w);
-});
+function unhide() {
+  input.style.display = "flex";
+  listenAgainButton.style.display = "flex";
+  showSolutionButton.style.display = "flex";
+}
 
 function nextSong(w) {
   playSong(w);
-  reponseDiv.innerHTML = "";
-  boutonSuivant.style.display = "none";
-  input.style.display = "block";
-  form.style.display = "flex";
-  boutonValider.style.display = "block";
-  boutonReponse.style.display = "block";
+  songTitleContainer.innerHTML = "";
+  timerContainer.style.display = "block";
 }
 
-boutonJouer.addEventListener("click", startTimer);
+startGameButton.addEventListener("click", startTimer);
 
 function chronoChecker() {
   if (seconds.textContent > 0 && seconds.textContent <= 3) {
     score = score + 5;
-    scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-    console.log("+5");
-    bonus.innerHTML = `+5 Points`;
-    bonus.style.display = "block";
-    bonus.classList.add("animation");
-    setTimeout(() => {
-      bonus.style.display = "none";
-    }, 1800);
+    scoreContainer.innerHTML = `<span>Score</span>${score}`;
+
+    bonusInfos = `+5 Points`;
+    bonusAnimated(bonusInfos);
   } else if (seconds.textContent > 3 && seconds.textContent <= 8) {
     score = score + 3;
-    scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-    console.log("+3");
-    bonus.innerHTML = `+3 Points`;
-    bonus.style.display = "block";
-    bonus.classList.add("animation");
-    setTimeout(() => {
-      bonus.style.display = "none";
-    }, 1800);
+    scoreContainer.innerHTML = `<span>Score</span>${score}`;
+
+    bonusInfos = `+3 Points`;
+    bonusAnimated(bonusInfos);
   } else if (seconds.textContent > 8 && seconds.textContent <= 14) {
     score = score + 2;
-    scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-    console.log("+2");
-    bonus.innerHTML = `+2 Points`;
-    bonus.style.display = "block";
-    bonus.classList.add("animation");
-    setTimeout(() => {
-      bonus.style.display = "none";
-    }, 1800);
+    scoreContainer.innerHTML = `<span>Score</span>${score}`;
+
+    bonusInfos = `+2 Points`;
+    bonusAnimated(bonusInfos);
   } else if (seconds.textContent > 14 && seconds.textContent <= 59) {
     score = score + 1;
-    scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-    console.log("+1");
-    bonus.innerHTML = `+1 Point`;
-    bonus.style.display = "block";
-    bonus.classList.add("animation");
-    setTimeout(() => {
-      bonus.style.display = "none";
-    }, 1800);
+    scoreContainer.innerHTML = `<span>Score</span>${score}`;
+
+    bonusInfos = `+1 Point`;
+    bonusAnimated(bonusInfos);
   } else if (seconds.textContent > 59) {
     score = score + 0;
-    scoreDIV.innerHTML = `<h1><span>Score</span>${score}</h1>`;
-    console.log("+0");
-    bonus.innerHTML = `+0 Point`;
-    bonus.style.display = "block";
-    bonus.classList.add("animation");
-    setTimeout(() => {
-      bonus.style.display = "none";
-    }, 1800);
+    scoreContainer.innerHTML = `<span>Score</span>${score}`;
+
+    bonusInfos = `+0 Point`;
+    bonusAnimated(bonusInfos);
   }
 }
 
-let interval;
+nextSongButton.addEventListener("click", () => {
+  nextSong(w);
+  nextSongButton.style.display = "none";
+  input.style.display = "flex";
+  listenAgainButton.style.display = "flex";
+  showSolutionButton.style.display = "flex";
+});
 
 // Fonctions pour le Timer
 function startTimer() {
   if (isRunning) return;
   isRunning = true;
   interval = setInterval(incrementTimer, 1000);
-  seconds.style.display = "block";
-  timerContainer.style.display = "flex";
 }
 
 function stopTimer() {
@@ -455,5 +456,82 @@ function incrementTimer() {
     seconds.innerText = pad(numOfSeconds);
   }
 }
+listenAgain(w);
 
-rejouer(w);
+function bonusAnimated(bonusInfos) {
+  bonusContainer.innerHTML = bonusInfos;
+  bonusContainer.style.display = "inline-block";
+  bonusContainer.classList.add("animatedBonus");
+  setTimeout(() => {
+    bonusContainer.style.display = "none";
+  }, 1800);
+}
+
+const colors = ["#e34069", "#e34069", "#e34069"];
+const bubbles = 8;
+
+const explode = (k, l) => {
+  let particles = [];
+  let ratio = window.devicePixelRatio;
+  let c = document.createElement("canvas");
+  let ctx = c.getContext("2d");
+
+  c.style.position = "absolute";
+  c.style.left = k - 100 + "px";
+  c.style.top = l - 100 + "px";
+  c.style.pointerEvents = "none";
+  c.style.width = 200 + "px";
+  c.style.height = 200 + "px";
+  c.style.zIndex = 100;
+  c.width = 200 * ratio;
+  c.height = 200 * ratio;
+  document.body.appendChild(c);
+
+  for (var m = 0; m < bubbles; m++) {
+    particles.push({
+      x: c.width / 2,
+      y: c.height / 2,
+      radius: r(20, 30),
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: r(0, 360, true),
+      speed: r(8, 12),
+      friction: 0.9,
+      opacity: r(1, 1, true),
+      yVel: 0,
+      gravity: 0.1,
+    });
+  }
+
+  render(particles, ctx, c.width, c.height);
+  setTimeout(() => document.body.removeChild(c), 1000);
+};
+
+const render = (particles, ctx, width, height) => {
+  requestAnimationFrame(() => render(particles, ctx, width, height));
+  ctx.clearRect(0, 0, width, height);
+
+  particles.forEach((p, i) => {
+    p.x += p.speed * Math.cos((p.rotation * Math.PI) / 180);
+    p.y += p.speed * Math.sin((p.rotation * Math.PI) / 180);
+
+    p.opacity -= 0.01;
+    p.speed *= p.friction;
+    p.radius *= p.friction;
+    p.yVel += p.gravity;
+    p.y += p.yVel;
+
+    if (p.opacity < 0 || p.radius < 0) return;
+
+    ctx.beginPath();
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = p.color;
+    ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, false);
+    ctx.fill();
+  });
+
+  return ctx;
+};
+
+const r = (a, b, c) => parseFloat((Math.random() * ((a ? a : 1) - (b ? b : 0)) + (b ? b : 0)).toFixed(c ? c : 0));
+
+input.addEventListener("input", (e) => explode(e.pageX, e.pageY));

@@ -1,0 +1,85 @@
+.particles {
+  background-color: #f8f8f8;
+  height: 120px;
+  position: absolute;
+  left: 50%; /* à 50%/50% du parent référent */
+  transform: translate(-50%, -50%);
+  top: 300px;
+}
+.particle1 {
+  border-radius: 50%;
+  position: absolute;
+  left: 200px;
+  top: 100px;
+  animation: particle1 0.3s ease-out forwards;
+  z-index: 200;
+  display: none;
+}
+
+.particle1 i {
+  font-size: 14px;
+  color: #e34069;
+}
+
+@keyframes particle1 {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0;
+    margin-top: 5px;
+  }
+  50% {
+    transform: scale(0.6, 0.6);
+    opacity: 1;
+  }
+  97% {
+    transform: scale(0.6, 0.6);
+  }
+
+  98% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(0, 0);
+    opacity: 0;
+    margin-left: 10px;
+  }
+}
+
+.particle3 {
+  border-radius: 50%;
+  position: absolute;
+  left: 200px;
+  top: 100px;
+  animation: particle3 0.3s ease-in forwards;
+  z-index: 200;
+  display: none;
+}
+
+.particle3 i {
+  font-size: 14px;
+  color: #e34069;
+}
+
+@keyframes particle3 {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0;
+    margin-top: 5px;
+  }
+  50% {
+    transform: scale(0.6, 0.6);
+    opacity: 1;
+  }
+  97% {
+    transform: scale(0.6, 0.6);
+  }
+
+  98% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(0, 0);
+    opacity: 0;
+    margin-left: -10px;
+  }
+}

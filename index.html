@@ -5,49 +5,85 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/159d0e16c5.js" crossorigin="anonymous"></script>
-    <title>Blind Test - Les 3 Fromages</title>
+    <title>BlindTest - 3F - Beta Version</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="volumeTitre"></div>
-    <div id="volume">
-      <button id="moins"><i class="fas fa-volume-down"></i></button>
-      <div id="volText"></div>
-      <button id="plus"><i class="fas fa-volume-up"></i></button>
-    </div>
+    <header></header>
 
     <main>
-      <header>
-        <h1>Blind<span>Test</span></h1>
-      </header>
-      <div id="score"><h1>0</h1></div>
-      <div id="chansonstrouvees"></div>
-      <div class="lecturebox">
-        <span class="lecture"></span>
-      </div>
+      <div class="content">
+        <div id="launcher">
+          <h1>Blind<span>Test</span></h1>
+          <h2>Les 3 Fromages</h2>
+          <div class="animatedItemContainer" id="startGame">
+            <div class="animatedItem">Commencer une partie</div>
+          </div>
+          <div id="inputPlayerName">
+            <input type="text" id="playerName" placeholder="Ton pseudo..." />
+            <div id="PlayerNameError"></div>
+          </div>
+        </div>
+        <div>
+          <div id="game">
+            <div id="gameHeader">
+              <div id="playerNameInfos">
+                <span>Nom du joueur :</span>
+                <div class="playerNameContainer"><span id="playerNameContainer"></span></div>
+              </div>
+              <div id="volumeSettings">
+                <button id="turnDownVolume"><i class="fas fa-volume-down"></i></button>
+                <button id="turnUpVolume"><i class="fas fa-volume-up"></i></button>
+              </div>
+            </div>
+            <h1 id="score"><span>Score</span> 0</h1>
+            <h2 id="guessedSongs">Chanson trouvée : 0</h2>
+            <div id="animatedItemContainer">
+              <div id="animatedItem"></div>
+            </div>
+            <div id="timer">
+              <span>Chrono</span>
+              <span id="seconds">0</span>
+            </div>
+            <div id="lives">0</div>
+            <div id="songTitle"></div>
+            <div id="bonusContainer">
+              <div id="bonus"></div>
+            </div>
 
-      <div class="timer">
-        <span>Chrono :</span>
-        <div class="seconds"></div>
-      </div>
-      <div id="vies"><h1>0</h1></div>
-      <div id="titreChanson"></div>
-      <div class="bonus-container">
-        <div id="bonus">Bonus</div>
-      </div>
-      <form action="">
-        <input type="text" autocomplete="off" placeholder="Titre de la chanson..." />
-        <button id="valider"><i class="fas fa-check"></i></button>
-      </form>
-      <div class="buttons">
-        <button id="replay">Réécouter<span>-1 point</span></button> <button id="reponse">Voir la réponse<span>-1 vie</span></button>
-      </div>
-      <button id="suivant"><i class="fas fa-play-circle"></i> <span>Chanson suivante</span></button>
+            <form class="game">
+              <input id="mainInput" type="text" autocomplete="off" placeholder="Titre de la chanson..." />
+              <button id="mainSubmit"><i class="fas fa-check"></i></button>
+            </form>
 
-      <button id="jouer">Jouer</button>
+            <div id="gameOptions">
+              <button id="listenAgain">Réécouter<span>-1 point</span></button>
+              <button id="showSolution">Voir la réponse<span>-1 vie</span></button>
+            </div>
 
-      <button id="newGame">Nouvelle partie</button>
+            <button id="nextSong"><i class="fas fa-play-circle"></i> <span>Chanson suivante</span></button>
+            <button id="newGame">Nouvelle partie</button>
+          </div>
+        </div>
+
+        <div id="ScoreLeaderboard">
+          <h1>Tableau des scores</h1>
+          <div class="rankedTable">
+            <div>Nom</div>
+            <div>Score</div>
+            <div>Chansons trouvées</div>
+          </div>
+
+          <div class="rankedTableList">
+            <div id="rankedPlayerName"></div>
+            <div id="rankedScore"></div>
+            <div id="rankedGuessedSongs"></div>
+          </div>
+        </div>
+      </div>
     </main>
+
+    <footer></footer>
     <script type="module" src="index.js"></script>
   </body>
 </html>

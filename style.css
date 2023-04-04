@@ -75,7 +75,6 @@ input#playerName {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  width: 900px;
   margin-left: auto;
   margin-right: auto;
 }

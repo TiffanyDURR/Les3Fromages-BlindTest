@@ -49,6 +49,7 @@ button#mainSubmit {
   margin-left: 12px;
   border-radius: 50%;
   cursor: pointer;
+  display: none;
 }
 
 button#mainSubmit:hover {

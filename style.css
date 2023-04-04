@@ -184,8 +184,16 @@ div#game div#timer span#seconds {
   cursor: pointer;
 }
 
+#animatedItemContainer {
+  width: 140px;
+  height: 140px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 #animatedItem,
 .animatedItem {
+  position: absolute;
   display: flex;
   align-items: center;
   text-align: center;
@@ -201,6 +209,7 @@ div#game div#timer span#seconds {
   animation: zoom-in-zoom-out 1s ease infinite;
   line-height: 1.2;
   font-weight: 900;
+  z-index: 100;
 }
 
 #animatedItem,
@@ -461,7 +470,11 @@ canvas {
   left: 50%; /* à 50%/50% du parent référent */
   transform: translate(-50%, -50%);
   top: 50%;
-  margin-top: 20px;
+  margin-top: -160px;
+  width: 500px;
+  height: 500px;
+  padding: 20px;
+  z-index: 1;
 }
 
 .content #launcher {

@@ -470,21 +470,20 @@ function bonusAnimated(bonusInfos) {
 const colors = ["#e34069", "#e34069", "#e34069"];
 const bubbles = 8;
 
-const explode = (k, l) => {
+const explode = () => {
   let particles = [];
-  let ratio = window.devicePixelRatio;
+  let ratio = 1;
   let c = document.createElement("canvas");
   let ctx = c.getContext("2d");
 
   c.style.position = "absolute";
-  c.style.left = k - 100 + "px";
-  c.style.top = l - 100 + "px";
+
   c.style.pointerEvents = "none";
   c.style.width = 200 + "px";
   c.style.height = 200 + "px";
-  c.style.zIndex = 100;
-  c.width = 200 * ratio;
-  c.height = 200 * ratio;
+  c.style.zIndex = 1;
+  c.width = 200;
+  c.height = 200;
   document.body.appendChild(c);
 
   for (var m = 0; m < bubbles; m++) {

@@ -191,8 +191,26 @@ div#game div#timer span#seconds {
   margin-right: auto;
 }
 
-#animatedItem,
 .animatedItem {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #e34069;
+  color: #eeb5c3;
+  border-radius: 50%;
+  padding: 20px;
+  height: 140px;
+  width: 140px;
+  animation: zoom-in-zoom-out 1s ease infinite;
+  line-height: 1.2;
+  font-weight: 900;
+  z-index: 100;
+}
+
+#animatedItem {
   position: absolute;
   display: flex;
   align-items: center;
